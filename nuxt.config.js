@@ -22,7 +22,7 @@ module.exports = {
     middleware: [ 'user-agent', 'agentInfo']
   },
 
-  vendor: ['vuex'],
+  vendor: ['vuex', 'axios'],
 
   /*
   ** Build configuration

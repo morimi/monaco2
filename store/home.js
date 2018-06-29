@@ -1,4 +1,4 @@
- import axios from 'axios';
+import axios from 'axios';
 
 const API = 'http://13.113.241.23'
 const APIURL = {
@@ -75,10 +75,10 @@ export const getters = {
 
 
 export const actions = {
-  getData({ commit, state, rootState }, target) {
+  async getData({ commit, state, rootState }, target) {
     commit('setLoading', {target: target, is: true})
 
-    axios.get(API + '/api/' + APIURL[target] + '?os=' + rootState.device, {
+    await axios.get(API + '/api/' + APIURL[target] + '?os=' + rootState.device, {
       timeout : 10000
     }).then( res => {
       if(res && res.data && (res.data.length || target === 'ranking')) {
@@ -95,6 +95,7 @@ export const actions = {
         }
       }
       commit('setLoading', {target: target, is: false})
+
     }).catch( (error) => {
       console.log(target + '.getData Error _:(´-`」 ∠):_');
       commit('setError', {type:target, code: 500});
@@ -102,6 +103,9 @@ export const actions = {
     });
   },
 
+  fetchData({ commit, state, rootState }, target ) {
+    return axios.get(API + '/api/' + APIURL[target] + '?os=' + rootState.device)
+  }
 }
 
 

@@ -2,14 +2,17 @@
   <div class="site">
     <site-header></site-header>
     <nuxt/>
+    <category-list></category-list>
   </div>
 </template>
 <script>
 import SiteHeader from '~/components/SiteHeader.vue'
+import CategoryList from '@/components/CategoryList'
 
 export default {
   components: {
-    SiteHeader
+    SiteHeader,
+    CategoryList
   }
 }
 </script>
