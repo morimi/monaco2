@@ -20,7 +20,7 @@ export default {
   },
   asyncData({ params, env, error, store }) {
     const cat = store.state.categories[params.name].child.find(cat => cat.slug === params.slug);
-    console.log(cat)
+
     return axios.get('http://localhost:8888/wp-json/wp/v2/posts/?categories=' + cat.id )
     .then( res => {
       return Object.assign({ posts: res.data }, cat)
@@ -34,6 +34,9 @@ export default {
   //   next();
   // },
 
+  /**
+   *
+   */
   beforeRouteUpdate (to, from, next) {
     const cat = this.$store.state.categories[to.params.name].child.find(cat => cat.slug === to.params.slug);
 
@@ -57,16 +60,7 @@ export default {
   },
 
   methods: {
-    fetchData(params) {
-      const cat = this.$store.state.categories[params.name].child.find(cat => cat.slug === params.slug);
-      console.log(cat)
-      return axios.get('http://localhost:8888/wp-json/wp/v2/posts/?categories=' + cat.id )
-      .then( res => {
-        return Object.assign({ posts: res.data }, cat)
-      }).catch((e)=>{
-        return error({ message: 'Category not found', statusCode: 404 })
-      })
-    }
+    
   }
 }
 </script>
