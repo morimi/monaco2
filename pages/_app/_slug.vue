@@ -1,6 +1,6 @@
 <template lang="html">
-  <div class="category">
-    category-index.vue
+  <div class="app-name">
+
   </div>
 </template>
 
@@ -8,6 +8,3 @@
 export default {
 }
 </script>
-
-<style lang="css">
-</style>

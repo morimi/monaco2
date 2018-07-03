@@ -15,8 +15,9 @@ export const state = () => ({
 
   agentInfo: {},
 
-  categories: {
-  }
+  categories: {},
+
+  news: []
 })
 
 export const getters = {}
@@ -51,5 +52,9 @@ export const mutations = {
 
   setCategories(state, data) {
     state.categories = data
+  },
+
+  setNews(state, data) {
+    state.news = data;
   }
 }

@@ -1,12 +1,3 @@
 <template lang="html">
-  <div class="game">
-    game_id.vue
-  </div>
+  <div class="category" data-temp="_slug"></div>
 </template>
-
-<script>
-
-</script>
-
-<style lang="css">
-</style>

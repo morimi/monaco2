@@ -34,6 +34,14 @@ export default {
     ...mapState(['agentInfo'])
   },
 
+  head() {
+    return {
+      meta: [
+        { hid: 'og_type', property: 'og:type', content: 'website' },
+      ]
+    }
+  },
+
   async fetch({ store, params }) {
     await store.dispatch('home/getData', 'tweet')
     await store.dispatch('home/getData', 'video')
@@ -41,6 +49,3 @@ export default {
   }
 }
 </script>
-
-<style>
-</style>

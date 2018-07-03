@@ -7,7 +7,7 @@
 <script>
 export default {
   created () {
-    this.$store.dispatch('home/getData', 'official')
+    ///this.$store.dispatch('home/getData', 'official')
   }
 }
 </script>
