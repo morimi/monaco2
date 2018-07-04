@@ -1,18 +1,14 @@
 <template lang="html">
-  <div class="category" data-temp="category">
-    <div class="container" v-if="!error">
-      <h2>「{{category.name}}」のアプリ一覧</h2>
-      <div class="posts" v-if="posts">
-        <ul>
-          <li v-for="post in posts" :key="post.id" :data-id="post.id">
-            <nuxt-link :to="{ name: 'app-slug', params: {app: app_type, slug: post.slug, post: post}}">{{post.title}}</nuxt-link>
-          </li>
-        </ul>
-      </div>
-    </div>
-    <div class="error">
+  <div class="page page-category" data-temp="category">
 
+    <h2>「{{category.name}}」のアプリ一覧</h2>
+
+    <div class="list-container" v-if="posts">
+      <article v-for="post in posts" :key="post.id" :data-id="post.id">
+        <nuxt-link :to="{ name: 'app-slug', params: {app: app_type, slug: post.slug, post: post}}">{{post.title}}</nuxt-link>
+      </article>
     </div>
+    
   </div>
 </template>
 
