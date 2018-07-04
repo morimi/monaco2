@@ -33,14 +33,14 @@ export const actions = {
       })
   },
 
-  async cateogries({ commit, state, rootState }) {
-    await axios.get('http://localhost:8888/wp-json/appsmate/v1/categories/')
-      .then( res => {
-        commit('setCategories', res.data)
-      }).catch((e)=>{
-        console.log(e)
-      })
-  }
+  // async cateogries({ commit, state, rootState }) {
+  //   await axios.get('http://localhost:8888/wp-json/appsmate/v1/categories/')
+  //     .then( res => {
+  //       commit('setCategories', res.data)
+  //     }).catch((e)=>{
+  //       console.log(e)
+  //     })
+  // }
 }
 
 export const mutations = {

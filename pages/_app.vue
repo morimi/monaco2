@@ -14,10 +14,15 @@ export default {
   //直アクセス
   asyncData({ params, env, error, store, redirect }) {
     let cat;
+    console.log('app.asyncData', params)
     // params : { app: 'game', slug: 'onmyoji-game' }
 
     if(! params.slug) {
       return redirect(302, '/category/' + params.app)
+    }
+
+    if(params.hasOwnProperty('post')) {
+      return { post: params.post, app_type: params.name}
     }
 
     return axios.get('http://localhost:8888/wp-json/wp/v2/posts/?slug=' + params.slug )

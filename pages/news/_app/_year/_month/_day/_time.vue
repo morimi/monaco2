@@ -1,6 +1,6 @@
 <template lang="html">
   <div class="news">
-    {{title}}
+    {{post.title}}
   </div>
 </template>
 
@@ -10,16 +10,18 @@ export default {
   asyncData({ params, env, error, store, redirect }) {
 
     if(store.state.news.length) {
-      return store.state.news.find(
-        item => item.date_params.year === params.year && item.date_params.month === params.month && item.date_params.day === params.day && item.date_params.time === params.time
-      );
+      return {
+        post: store.state.news.find(
+          item => item.date_params.year === params.year && item.date_params.month === params.month && item.date_params.day === params.day && item.date_params.time === params.time
+        )
+      };
     }
 
     let q = '&appname=' + params.app + '&year=' + params.year + '&month=' + params.month + '&day=' + params.day + '&time=' + params.time;
 
     return axios.get('http://localhost:8888/wp-json/wp/v2/news/?_embed' + q)
     .then( res => {
-      return res.data.shift()
+      return { post: res.data.shift() }
     }).catch((e)=>{
       return error({ message: 'News not found', statusCode: 404 })
     })
@@ -38,9 +40,10 @@ export default {
 
     return axios.get('http://localhost:8888/wp-json/wp/v2/news/?_embed' + q)
     .then( res => {
-      return res.data.shift()
+      this.post = res.data.shift()
+      next();
     }).catch((e)=>{
-      return error({ message: 'News not found', statusCode: 404 })
+      next();
     })
   }
 }

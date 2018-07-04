@@ -1,10 +1,5 @@
 <template lang="html">
-  <div class="app-name">
+  <div class="app-slug" data-temp="_slug">
 
   </div>
 </template>
-
-<script>
-export default {
-}
-</script>
