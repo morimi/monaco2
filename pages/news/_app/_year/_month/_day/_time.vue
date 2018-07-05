@@ -1,6 +1,9 @@
 <template lang="html">
   <div class="news">
-    {{post.title}}
+    <h2>{{post.title}}</h2>
+    <div class="content" v-html="post.content">
+
+    </div>
   </div>
 </template>
 
@@ -12,7 +15,7 @@ export default {
     if(store.state.news.length) {
       return {
         post: store.state.news.find(
-          item => item.date_params.year === params.year && item.date_params.month === params.month && item.date_params.day === params.day && item.date_params.time === params.time
+          item => item.appname === params.app && item.date_params.year === params.year && item.date_params.month === params.month && item.date_params.day === params.day && item.date_params.time === params.time
         )
       };
     }

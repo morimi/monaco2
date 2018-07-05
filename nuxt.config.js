@@ -21,7 +21,8 @@ module.exports = {
 
   env: {
     site_name: site_name,
-    site_description: site_description
+    site_description: site_description,
+    api_url: 'http://localhost:8888'
   },
 
   /*

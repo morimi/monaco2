@@ -1,6 +1,11 @@
+/**
+ * @fileoverview store of home
+ */
+
 import axios from 'axios';
 
 const API = 'http://13.113.241.23'
+
 const APIURL = {
   tweet: 'tweet',
   official: 'official-tweet',
@@ -9,7 +14,6 @@ const APIURL = {
   ranking: 'top-store-rank',
   goods: 'goods'
 };
-
 
 export const state = () => ({
   /**

@@ -17,19 +17,21 @@
 
 <script>
 import axios from 'axios';
+import { mapState } from 'vuex'
 export default {
+  computed: {
+    ...mapState('archive', ['posts',  'error'])
+  },
+
   asyncData({ params, env, error, store, redirect }) {
     let q = '';
 
-console.log(params)
     if(params.year && params.month) { //news/2018/10
       q = '&year=' + params.year + '&month=' + params.month;
     } else if(params.year && !params.month) { //news/2018
       q = '&year=' + params.year;
-    } else if(!params.year && !params.month){ //news
-      //http://localhost:8888/news/knivesout/2018/05/30/213516/
     } else {
-      return redirect(302, '/')
+      return redirect(302, '/news')
     }
 
     return axios.get('http://localhost:8888/wp-json/wp/v2/news/?_embed' + q)
@@ -48,10 +50,8 @@ console.log(params)
       q = '&year=' + to.params.year + '&month=' + to.params.month;
     } else if(to.params.year && !to.params.month) { //news/2018
       q = '&year=' + params.year;
-    } else if(!to.params.year && !to.params.month){ //news
-      //http://localhost:8888/news/knivesout/2018/05/30/213516/
     } else {
-      return redirect(302, '/')
+      return redirect(302, '/news')
     }
 
     return axios.get('http://localhost:8888/wp-json/wp/v2/news/?_embed' + q)

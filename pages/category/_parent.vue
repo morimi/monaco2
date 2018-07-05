@@ -1,3 +1,3 @@
 <template lang="html">
-<div data-temp="_name"></div>
+<div data-temp="_parent"></div>
 </template>

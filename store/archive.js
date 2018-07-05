@@ -1,17 +1,60 @@
+/**
+ * @fileoverview store of archives
+ */
+
 import axios from 'axios';
 
 export const state = () => ({
-  posts: [],
 
-  post: null,
-
+  /**
+   * @type {string}
+   */
   app_type: null,
 
   /**
-  * @type {{name: string, slug: string}}
+  * category parametor
+  * @type {{name: string, slug: string, id: number}}
   */
   category: null,
 
+  /**
+   * @type {string}
+   */
+  year: null,
+
+  /**
+   * @type {string}
+   */
+  month: null,
+
+  /**
+   * @type {Array.<Object>} WP_Post Object Array
+   */
+  category_entries: [],
+
+  /**
+   * @type {Array.<Object>} WP_Post Object Array
+   */
+  news_entries: [],
+
+  /**
+   * @type {Array.<Object>} WP_Post Object Array
+   */
+  article_entries: [],
+
+  /**
+   * @type {Array.<Object>} WP_Post Object Array
+   */
+  word_entries: [],
+
+  /**
+   * @type {Array.<Object>} WP_Post Object Array
+   */
+  search_entries: [],
+
+  /**
+   * @type {{message: string, statusCode: number}}
+   */
   error: null
 })
 
@@ -23,16 +66,24 @@ export const actions = {
    * カテゴリーに登録されたアプリの一覧を得る
    * @prop {{name: string, slug: string}} params 'category/game/rpg' -> name:'game', slug:'rpg'
    */
-  async fetchArchive({ commit, state, rootState }, params) {
+  async fetchCategoryArchive({ commit, state, rootState }, params) {
     let cat;
+    console.log('fetchCategoryArchive', params, state.category)
+
+    //history.backとかして同じデータ残ってるなら使う
+    if(state.category && state.category_entries.length &&
+      ((params.parent === state.category.parent && params.slug === state.category.slug))
+      ) {
+      return;
+    }
 
     //ルートストアのカテゴリーリストからparams.slugに該当するカテゴリーを探す
-    if(params.name && params.slug) {
-      cat = rootState.categories[params.name].child.find(cat => cat.slug === params.slug);
+    if(params.parent && params.slug) {
+      cat = rootState.categories[params.parent].child.find(cat => cat.slug === params.slug);
 
     //params.nameに該当するカテゴリーがあったらワンチャン
-    } else if(/^(game|app)$/.test(params.name) && !params.slug) {
-      cat = rootState.categories[params.name];
+    } else if(/^(game|app)$/.test(params.parent) && !params.slug) {
+      cat = rootState.categories[params.parent];
     }
 
     //カテゴリ情報がなかった
@@ -40,13 +91,37 @@ export const actions = {
       return commit('setError', { message: 'Category not found', statusCode: 404 })
     }
 
-    await axios.get('http://localhost:8888/wp-json/wp/v2/posts/?categories=' + cat.id )
+    cat['parent'] = params.parent
+    commit('setCategory', cat)
+
+
+    await axios.get(process.env.api_url + '/wp-json/wp/v2/posts/?categories=' + cat.id )
     .then( res => {
       commit('setParam', params)
-      commit('setCategory', cat)
-      return commit('setPosts', res.data);
+      return commit('setEntries', {data: res.data, target: 'category'});
     }).catch((e)=>{
       return commit('setError', { message: 'Category not found', statusCode: 404 })
+    })
+  },
+
+  /**
+   * ニュースに登録された記事を得る
+   */
+  async fetchNewsArchive({ commit, state, rootState }, params) {
+    let q = '';
+
+    if(params.year && params.month) { //news/2018/10
+      q = '&year=' + params.year + '&month=' + params.month;
+    } else if(params.year && !params.month) { //news/2018
+      q = '&year=' + params.year;
+    }
+
+    return axios.get(process.env.api_url + '/wp-json/wp/v2/news/?_embed' + q)
+    .then( res => {
+      commit('setParam', params)
+      return commit('setPosts', res.data);
+    }).catch((e)=>{
+      return commit('setError', { message: 'News not found', statusCode: 404 })
     })
   }
 
@@ -60,12 +135,24 @@ this.slug = cat.slug;
 this.id = cat.id;
 */
 export const mutations = {
-  setPosts(state, data) {
-    state.posts = data
+
+  /**
+   * @type {{ data: Array, target: string }}
+   */
+  setEntries(state, data) {
+    state[data.target + '_entries'] = data.data
   },
 
   setParam(state, params) {
-    state.app_type = params.name
+    if(params.parent) {
+      state.app_type = params.parent
+    }
+    if(params.year) {
+      state.year = params.year
+    }
+    if(params.month) {
+      state.month = params.month
+    }
   },
 
   setCategory(state, cat) {
