@@ -1,9 +1,9 @@
 <template lang="html">
-  <nav class="widget widget-category-list">
-    <h2 class="widget-title">カテゴリー一覧</h2>
+  <nav class="category-list component">
+    <h2 class="component__title">カテゴリー一覧</h2>
 
-    <ul class="category-list">
-      <li v-for="cat in categories" :key="cat.id" class="category-nav">
+    <ul class="nav-list list">
+      <li v-for="cat in categories" :key="cat.id" class="nav-list__item">
         <nuxt-link :to="{ name: 'category-parent', params: {parent: cat.slug, slug:null} }" v-if="cat.type === 'post'">{{cat.title}}</nuxt-link>
         <nuxt-link :to="{ name: cat.type , params: {parent: cat.slug, slug:null} }" v-else>{{cat.title}}</nuxt-link>
 
