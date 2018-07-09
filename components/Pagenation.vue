@@ -2,9 +2,9 @@
   <nav class="pagination" role="navigation" aria-label="pagination">
     <ul class="uk-pagination uk-flex-center" uk-margin>
 
-      <li v-if="showFirstLast && page > (pageRange + 1)">
-        <router-link :to="{ name: router_name, query: { page: 1 }, params: router_params}">
-          <span uk-pagination-last>First</span>
+      <li v-if="showFirstLast && page > 1">
+        <router-link v-if="page !== 1" :to="{ name: router_name, query: { page: 1 }, params: router_params}">
+          <span uk-pagination-first>First</span>
         </router-link>
       </li>
 
@@ -28,7 +28,7 @@
         <a v-else class="disabled"><span uk-pagination-next>Next</span></a>
       </li>
 
-      <li v-if="showFirstLast && (page < totalPage - pageRange)">
+      <li v-if="showFirstLast && page < totalPage">
         <router-link :to="{ name: router_name, query: { page: totalPage }, params: router_params}">
           <span uk-pagination-last>Last</span>
         </router-link>
