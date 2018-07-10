@@ -7,12 +7,12 @@
         <nuxt-link :to="{ name: 'app-slug', params: {app: app_type, slug: entry.slug, entry: entry}}">{{entry.title}}</nuxt-link>
       </article>
     </div>
-    <div class="error-info" v-else>
+    <div class="error-info"  v-if="category && !entries.length ">
       <p>登録がありません</p>
     </div>
     <pagenation
       v-if="entries.length"
-      :page="$route.query.page"
+      :page="this.page"
       :router_name="'category' + ($route.params.parent ? '-parent' : ($route.params.slug ? '-slug' : '' ))"
       :router_params="{ parent: $route.params.parent, slug: $route.params.slug }"
       :totalPage="totalPage"></pagenation>
@@ -22,6 +22,7 @@
 </template>
 
 <script>
+import Vue from 'vue';
 import axios from 'axios';
 import { mapState } from 'vuex'
 import CategoryList from '@/components/CategoryList'
@@ -34,16 +35,28 @@ export default {
   },
 
   computed: {
-    ...mapState('archive', {
-      entries: 'category_entries'
-    }),
     ...mapState('archive', ['app_type', 'category', 'error', 'totalPage']),
 
+    page() {
+      return this.$route.query.page || 1;
+    },
+    entries() {
+      console.log(this.$store.state.archive.category_entries, this.page)
+      return this.$store.state.archive.category_entries[this.page] || []
+    }
   },
 
   //ロード
   async fetch ({ store, params, error, query }) {
     let page = query.page || 1;
+
+
+    //history.backとかして同じデータ残ってるなら使う
+    if(store.state.category) {
+      if( params.slug === store.state.category.slug || ! params.slug && params.parent === store.state.category.parent) {
+        return;
+      }
+    }
 
     await store.dispatch('archive/fetchCategoryArchive', { params, page })
 
@@ -54,7 +67,24 @@ export default {
 
   //ルーター経由移動
   async beforeRouteUpdate (to, from, next) {
-    let params = to.params, page = to.query.page || 1;
+    let params = to.params,
+        page = to.query.page || 1,
+        slug = params.slug || params.parent,
+        state = this.$store.state.archive,
+        entries = state.category_entries[page];
+console.log('beforeRouteUpdate', page, this.entries)
+
+    //history.backとかして同じデータ残ってるなら使う
+    if(state.category && slug === state.category.slug && params.parent === state.category.parent ) {
+      if(entries) {
+        return next();
+      } else {
+        await this.$store.dispatch('archive/fetchCategoryArchive', { params, page })
+        return next();
+      }
+    } else {
+      this.$store.commit('archive/resetEntries', 'category')
+    }
 
     await this.$store.dispatch('archive/fetchCategoryArchive', { params, page })
     next();

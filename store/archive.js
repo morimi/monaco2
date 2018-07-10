@@ -74,13 +74,6 @@ export const actions = {
     let cat;
     console.log('fetchCategoryArchive', params, page)
 
-    //history.backとかして同じデータ残ってるなら使う
-    if(state.category && state.category_entries.length &&
-      ((params.parent === state.category.parent && params.slug === state.category.slug))
-      ) {
-      return;
-    }
-
     //ルートストアのカテゴリーリストからparams.slugに該当するカテゴリーを探す
     if(params.parent && params.slug) {
       cat = rootState.categories[params.parent].child.find(cat => cat.slug === params.slug);
@@ -98,7 +91,6 @@ export const actions = {
     cat['parent'] = params.parent
     commit('setCategory', cat)
 
-
     await axios.get(process.env.api_url + '/wp-json/wp/v2/posts/?categories=' + cat.id + '&page=' + page) //+ '&page=' + page
     .then( res => {
       //res.headers
@@ -107,10 +99,10 @@ export const actions = {
       //.x-wp-totalpages
       let totalCount = parseInt(res.headers['x-wp-total']),
           totalPage = parseInt(res.headers['x-wp-totalpages'])
-
+          
       commit('setParam', params)
       commit('setTotal', {totalCount, totalPage})
-      return commit('setEntries', {data: res.data, target: 'category'});
+      return commit('setEntries', {data: res.data, target: 'category', page: page});
 
 
     }).catch((e)=>{
@@ -153,8 +145,12 @@ export const mutations = {
   /**
    * @type {{ data: Array, target: string }}
    */
-  setEntries(state, data) {
-    state[data.target + '_entries'] = data.data
+  setEntries(state, { data, target, page }) {
+    state[target + '_entries'][page] = data
+  },
+
+  resetEntries(state, target) {
+    state[target + '_entries'] = [];
   },
 
   setParam(state, params) {

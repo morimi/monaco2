@@ -79,7 +79,7 @@ export const getters = {
 
 
 export const actions = {
-  async getData({ commit, state, rootState }, target) {
+  async fetchData({ commit, state, rootState }, target) {
     commit('setLoading', {target: target, is: true})
 
     await axios.get(API + '/api/' + APIURL[target] + '?os=' + rootState.device, {
@@ -107,9 +107,6 @@ export const actions = {
     });
   },
 
-  fetchData({ commit, state, rootState }, target ) {
-    return axios.get(API + '/api/' + APIURL[target] + '?os=' + rootState.device)
-  }
 }
 
 

@@ -2,17 +2,7 @@
   <section class="container">
     <pre>{{ agentInfo }}</pre>
 
-    <section id="newest-official-info" class="timeline-content">
-      <h2 class="h2">
-        最新アプリ公式情報
-      </h2>
-      <transition name="slide-fade">
-        <div class="content-inner">
-          <official></official>
-          <div class="icon-loading-dots"></div>
-        </div>
-      </transition>
-    </section>
+    <official></official>
 
     <tweet></tweet>
 
@@ -43,8 +33,9 @@ export default {
   },
 
   async fetch({ store, params }) {
-    await store.dispatch('home/getData', 'tweet')
-    await store.dispatch('home/getData', 'video')
+    await store.dispatch('home/fetchData', 'official')
+    await store.dispatch('home/fetchData', 'tweet')
+    await store.dispatch('home/fetchData', 'video')
     //await store.dispatch('cateogries');
   }
 }

@@ -1,4 +1,4 @@
-<template lang="html">
+<template>
   <nav class="category-list component">
     <h2 class="component__title">カテゴリー一覧</h2>
 
@@ -29,16 +29,11 @@
 </template>
 
 <script>
-import axios from 'axios';
-import { mapState, mapActions } from 'vuex'
+import { mapState } from 'vuex'
 
 export default {
   computed: {
     ...mapState(['categories'])
-  },
-
-  mounted() {
-
   }
 }
 </script>
