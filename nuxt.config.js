@@ -43,6 +43,7 @@ module.exports = {
   loading: { color: '#3B8070' },
 
   modules: [
+    '@nuxtjs/component-cache',
     '@nuxtjs/axios',
     '@nuxtjs/pwa'
   ],
