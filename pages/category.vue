@@ -18,7 +18,7 @@
       <pagenation
         v-if="entries.length"
         :page="this.page"
-        :router_name="'category' + ($route.params.parent ? '-parent' : ($route.params.slug ? '-slug' : '' ))"
+        :router_name="routerName"
         :router_params="{ parent: $route.params.parent, slug: $route.params.slug }"
         :totalPage="category.totalPage"></pagenation>
 
@@ -35,6 +35,14 @@ import LazyWrapper from "~/components/LazyWrapper"
 import CategoryList from '@/components/CategoryList'
 import Pagenation from '@/components/Pagenation'
 
+
+// category/[parent]/[slug]/[page]
+// category/
+// category/game
+// category/game/2
+// category/game/rpg
+// category/game/rpg/2
+
 export default {
   components: {
     CategoryList,
@@ -50,15 +58,36 @@ export default {
     },
 
     slug() {
-      return this.$route.params.slug || 'all';
+      return typeof this.$route.params.slug === 'string' && this.$route.params.slug || 'all';
     },
 
     page() {
+      if( typeof this.$route.params.slug === 'number') {
+        return this.$route.params.slug;
+      }
       return this.$route.params.page || 1;
     },
 
     entries() {
       return (this.parent && this.slug) ? this.$store.state.category[this.parent][this.slug][this.page] : []
+    },
+
+    routerName() {
+      let name = 'category';
+
+      if( this.parent ) {
+        name += '-parent';
+      }
+
+      if( this.slug ) {
+        name += '-slug'
+      }
+
+      if( this.page ) {
+        name += '-page'
+      }
+
+      return name
     }
   },
 
