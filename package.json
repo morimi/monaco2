@@ -5,7 +5,7 @@
   "author": "mori_misaki <mori_misaki@cyberagent.co.jp>",
   "private": true,
   "scripts": {
-    "dev": "nuxt -p 4000",
+    "dev": " NODE_ENV='local' nuxt -p 4000",
     "build": "nuxt build",
     "start": "nuxt start",
     "generate": "nuxt generate",
@@ -15,7 +15,10 @@
     "test:e2e": "jest -e test/e2e --config=test/e2e/jest.config.js"
   },
   "dependencies": {
+    "@nuxtjs/pwa": "^2.0.8",
+    "apicache": "^1.2.3",
     "axios": "^0.18.0",
+    "express": "^4.16.3",
     "jest-puppeteer": "^3.2.1",
     "nuxt": "^1.0.0"
   },

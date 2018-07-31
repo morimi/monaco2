@@ -36,11 +36,14 @@ export const actions = {
    */
   async nuxtServerInit ({ commit, dispatch }, { app }) {
     //カテゴリーリスト取得
-    await app.$axios.get(HOST + 'wp-json/appsmate/v1/categories/')
+    await app.$axios.$get('/wp-json/appsmate/v1/categories/')
       .then( res => {
-        commit('category/setCategories', res.data)
-        commit('category/initState', res.data)
-      }).catch((e)=>{})
+        commit('category/setCategories', res)
+        commit('category/initState', res)
+      }).catch((e)=>{
+        //TODO: https://mya-ake.com/slides/nuxt-axios-error-handling#20
+        console.error(e.config)
+      })
   },
 
 }

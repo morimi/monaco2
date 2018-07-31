@@ -19,10 +19,22 @@ module.exports = {
     ]
   },
 
+  manifest: {
+    name: site_name,
+    "short_name": "AppsMate",
+    description: site_description,
+    theme_color: "#188269",
+    "orientation": "portrait",
+    "start_url": "http://localhost:4000/",
+    "display": "standalone",
+    "gcm_sender_id": "103953800507",
+    "theme_color": "#ffffff",
+    "background_color": "#ffffff"
+  },
+
   env: {
     site_name: site_name,
-    site_description: site_description,
-    api_url: 'http://localhost:8888'
+    site_description: site_description
   },
 
   /*
@@ -30,12 +42,9 @@ module.exports = {
   */
   loading: { color: '#3B8070' },
 
-  router: {
-    middleware: [ 'user-agent', 'agentInfo']
-  },
-
   modules: [
-    '@nuxtjs/axios'
+    '@nuxtjs/axios',
+    '@nuxtjs/pwa'
   ],
 
   plugins: [
@@ -46,10 +55,19 @@ module.exports = {
     'vuex'
   ],
 
+  axios: {
+    progress: false,
+    baseURL: 'http://localhost:8888/',
+    //prefix: '/api',
+  },
+
+  serverMiddleware: ["~/common/apicache.js"],
+
   /*
   ** Build configuration
   */
   build: {
+
     /*
     ** Run ESLint on save
     */
@@ -66,6 +84,14 @@ module.exports = {
   },
 
   render: {
-
+    middleware: [ 'user-agent', 'agentInfo']
+    ,static: {
+      maxAge: "1w",
+      setHeaders(res, path) {
+        if (path.includes("sw.js")) {
+          res.setHeader("Cache-Control", `public, max-age=${15 * 60}`)
+        }
+      }
+    }
   }
 }

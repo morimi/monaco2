@@ -102,8 +102,8 @@ export const actions = {
       this._cancelSource = CancelToken.source()
     }
 
-    await this.$axios.get(
-      process.env.api_url + '/wp-json/wp/v2/posts/',
+    await this.$axios.$get(
+      '/wp-json/wp/v2/posts/',
       {
         transformRequest: [(data, headers) => {
           commit('setLoading', true);
@@ -119,13 +119,14 @@ export const actions = {
     ).then( res => {
 
       commit('setLoading', false);
-      commit('setEntries', { parent, slug, page, data: res.data});
+      commit('setEntries', { parent, slug, page, data: res});
 
-      if( res.data.length === 0 ) {
+      if( res.length === 0 ) {
         commit('setError', { message: 'Entry not found', code: 404 })
       }
 
     }).catch((e)=>{
+      console.log(e.config)
       if(!isCancel(e)) {
         commit('setError', { message: 'Entry not found', code: 404 })
       }
