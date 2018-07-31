@@ -34,7 +34,17 @@ module.exports = {
     middleware: [ 'user-agent', 'agentInfo']
   },
 
-  vendor: ['vuex', 'axios'],
+  modules: [
+    '@nuxtjs/axios'
+  ],
+
+  plugins: [
+    { src: '~/plugins/router-sync.js', ssr: true },
+  ],
+
+  vendor: [
+    'vuex'
+  ],
 
   /*
   ** Build configuration
@@ -53,5 +63,9 @@ module.exports = {
         })
       }
     }
+  },
+
+  render: {
+
   }
 }

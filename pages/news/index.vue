@@ -27,12 +27,11 @@
 </template>
 
 <script>
-import axios from 'axios';
 export default {
-  asyncData({ params, env, error, store, redirect }) {
+  asyncData({ app, params, env, error, store, redirect }) {
   console.log(params)
 
-    return axios.get('http://localhost:8888/wp-json/wp/v2/news/?_embed')
+    return app.$axios.get('http://localhost:8888/wp-json/wp/v2/news/?_embed')
     .then( res => {
       store.commit('setNews', res.data);
       return { posts: res.data }
@@ -44,7 +43,7 @@ export default {
   //ルーター経由移動
   beforeRouteUpdate (to, from, next) {
 
-    return axios.get('http://localhost:8888/wp-json/wp/v2/news/?_embed')
+    return this.$axios.get('http://localhost:8888/wp-json/wp/v2/news/?_embed')
     .then( res => {
       this.posts = res.data;
       next();

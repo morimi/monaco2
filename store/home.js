@@ -2,8 +2,6 @@
  * @fileoverview store of home
  */
 
-import axios from 'axios';
-
 const API = 'http://13.113.241.23'
 
 const APIURL = {
@@ -49,40 +47,18 @@ export const state = () => ({
     rss: null,
     ranking: null,
     goods: null
-  },
-
-  loading: {
-    official: false,
-    tweet: false,
-    video: false,
-    rss: false,
-    ranking: false,
-    goods: false
-  },
-
-  isContentOpen: {
-    official: true,
-    tweet: true,
-    video: true,
-    rss: true,
-    ranking: true,
-    goods: true
   }
 })
 
 export const getters = {
-
-  getOfficial: state => state.official,
-  isLoading: state => target => state.loading[target],
-  isLoadingRanking: state => state.loading.ranking
 }
 
 
 export const actions = {
-  async fetchData({ commit, state, rootState }, target) {
-    commit('setLoading', {target: target, is: true})
 
-    await axios.get(API + '/api/' + APIURL[target] + '?os=' + rootState.device, {
+  async fetchData({ commit, state, rootState }, target) {
+
+    await this.$axios.get(API + '/api/' + APIURL[target] + '?os=' + rootState.device, {
       timeout : 10000
     }).then( res => {
       if(res && res.data && (res.data.length || target === 'ranking')) {
@@ -98,12 +74,10 @@ export const actions = {
           commit('setError', {type: target, code: 404});
         }
       }
-      commit('setLoading', {target: target, is: false})
 
     }).catch( (error) => {
       console.log(target + '.getData Error _:(´-`」 ∠):_');
       commit('setError', {type:target, code: 500});
-      commit('setLoading', {target: target, is: false})
     });
   },
 
@@ -130,17 +104,4 @@ export const mutations = {
     state.error[error.type] = error.code
   },
 
-  /**
-   * @param {string} target
-   */
-  toggleContentOpen(state, target) {
-    state.isContentOpen[target] = !state.isContentOpen[target]
-  },
-
-  /**
-   * @param {{target: string, is: boolean}} loading
-   */
-  setLoading(state, loading) {
-    state.loading[loading.target] = loading.is
-  }
 }

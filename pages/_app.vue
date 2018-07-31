@@ -14,7 +14,6 @@
 </template>
 
 <script>
-import axios from 'axios';
 export default {
 
   data() {
@@ -27,7 +26,7 @@ export default {
 
   //直アクセス
   // params : { app: 'game', slug: 'onmyoji-game' }
-  async asyncData({ params, env, error, store, redirect }) {
+  async asyncData({ app, params, env, error, store, redirect }) {
     let cat;
     console.log('app.asyncData', params)
 
@@ -41,14 +40,14 @@ export default {
 
       //記事データがstoreにない→リクエスト
       if(! params.hasOwnProperty('entry')) {
-        let wp_entry = await axios.get('http://localhost:8888/wp-json/wp/v2/posts/?slug=' + params.slug )
+        let wp_entry = await app.$axios.get('http://localhost:8888/wp-json/wp/v2/posts/?slug=' + params.slug )
         entry = wp_entry.data.shift();
       } else {
         entry = params.entry
       }
 
       //アプリ情報を得る
-      let app_info = await axios.get('http://13.113.241.23/api/app-info?os=ios&appId=' + entry.appstore_id )
+      let app_info = await app.$axios.get('http://13.113.241.23/api/app-info?os=ios&appId=' + entry.appstore_id )
 
       return { entry: entry, app_info: app_info.data, app_type: params.name}
 

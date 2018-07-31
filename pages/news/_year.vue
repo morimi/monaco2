@@ -16,14 +16,13 @@
 </template>
 
 <script>
-import axios from 'axios';
 import { mapState } from 'vuex'
 export default {
   computed: {
     ...mapState('archive', ['posts',  'error'])
   },
 
-  asyncData({ params, env, error, store, redirect }) {
+  asyncData({ app, params, env, error, store, redirect }) {
     let q = '';
 
     if(params.year && params.month) { //news/2018/10
@@ -34,7 +33,7 @@ export default {
       return redirect(302, '/news')
     }
 
-    return axios.get('http://localhost:8888/wp-json/wp/v2/news/?_embed' + q)
+    return app.$axios.get('http://localhost:8888/wp-json/wp/v2/news/?_embed' + q)
     .then( res => {
       return { posts: res.data, month: params.month, year: params.year }
     }).catch((e)=>{
@@ -54,7 +53,7 @@ export default {
       return redirect(302, '/news')
     }
 
-    return axios.get('http://localhost:8888/wp-json/wp/v2/news/?_embed' + q)
+    return app.$axios.get('http://localhost:8888/wp-json/wp/v2/news/?_embed' + q)
     .then( res => {
       this.posts = res.data;
       this.month = to.params.month;

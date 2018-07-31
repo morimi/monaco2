@@ -33,7 +33,7 @@ import { mapState } from 'vuex'
 
 export default {
   computed: {
-    ...mapState(['categories'])
+    ...mapState('category', ['categories'])
   }
 }
 </script>

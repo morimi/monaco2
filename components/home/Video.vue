@@ -5,12 +5,11 @@
     </h2>
     <transition name="slide-fade">
       <div class="content-inner">
-        <div class="timeline" :class="{'is-loaded': video.length || error.video }">
+        <div class="timeline">
           <pre class="" v-for="item in video" :key="item.id_str">
             {{item.snippet.title}}
           </pre>
         </div>
-        <div class="icon-loading-dots"></div>
       </div>
     </transition>
   </section>

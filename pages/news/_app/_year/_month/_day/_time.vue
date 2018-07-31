@@ -8,9 +8,8 @@
 </template>
 
 <script>
-import axios from 'axios';
 export default {
-  asyncData({ params, env, error, store, redirect }) {
+  asyncData({ app, params, env, error, store, redirect }) {
 
     if(store.state.news.length) {
       return {
@@ -22,7 +21,7 @@ export default {
 
     let q = '&appname=' + params.app + '&year=' + params.year + '&month=' + params.month + '&day=' + params.day + '&time=' + params.time;
 
-    return axios.get('http://localhost:8888/wp-json/wp/v2/news/?_embed' + q)
+    return app.$axios.get('http://localhost:8888/wp-json/wp/v2/news/?_embed' + q)
     .then( res => {
       return { post: res.data.shift() }
     }).catch((e)=>{
@@ -41,7 +40,7 @@ export default {
 
     let q = '&appname=' + to.params.app + '&year=' + to.params.year + '&month=' + to.params.month + '&day=' + to.params.day + '&time=' + to.params.time;
 
-    return axios.get('http://localhost:8888/wp-json/wp/v2/news/?_embed' + q)
+    return app.$axios.get('http://localhost:8888/wp-json/wp/v2/news/?_embed' + q)
     .then( res => {
       this.post = res.data.shift()
       next();

@@ -13,9 +13,8 @@
 </template>
 
 <script>
-import axios from 'axios';
 export default {
-  asyncData({ params, env, error, store, redirect }) {
+  asyncData({ app, params, env, error, store, redirect }) {
     let q = '';
 
     if(params.year && params.month) { //news/2018/10
@@ -28,7 +27,7 @@ export default {
       return redirect(302, '/')
     }
 
-    return axios.get('http://localhost:8888/wp-json/wp/v2/article/' + q)
+    return app.$axios.get('http://localhost:8888/wp-json/wp/v2/article/' + q)
     .then( res => {
       return { posts: res.data }
     }).catch((e)=>{

@@ -5,12 +5,11 @@
     </h2>
     <transition name="slide-fade">
       <div class="content-inner">
-        <div class="timeline" :class="{'is-loaded': tweet.length || error.tweet }">
+        <div class="timeline">
           <pre class="" v-for="item in tweet" :key="item.id_str">
             {{item.user.name}}
           </pre>
         </div>
-        <div class="icon-loading-dots"></div>
       </div>
     </transition>
   </section>
