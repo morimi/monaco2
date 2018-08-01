@@ -2,34 +2,34 @@
   <nav class="pagination" role="navigation" aria-label="pagination">
     <ul class="uk-pagination uk-flex-center" uk-margin>
 
-      <li v-if="showFirstLast && page > 1">
-        <router-link v-if="page !== 1" :to="{ name: router_name, params: Object.assign({ page: null }, router_params)}">
+      <li v-if="showFirstLast && pageNum > 1">
+        <router-link v-if="pageNum !== 1" :to="{ name: router_name, params: formatRouterParams({ page: 1 })}">
           <span uk-pagination-first>First</span>
         </router-link>
       </li>
 
       <li v-if="showPrevNext">
-         <router-link v-if="page > 1" :to="{ name: router_name, params: Object.assign({ page: pageNum - 1 }, router_params)}">
+         <router-link v-if="pageNum > 1" :to="{ name: router_name, params: formatRouterParams({ page: pageNum - 1 })}">
            <span uk-pagination-previous>Prev</span>
          </router-link>
          <a v-else class="disabled"><span uk-pagination-prev>Prev</span></a>
       </li>
 
-      <li v-for="(num, i) in pages" :key="i" :class="{'active': num === page}">
+      <li v-for="(num, i) in pages" :key="i" :class="{'active': num === pageNum}">
         <span v-if="0 > num">&hellip;</span>
-        <nuxt-link v-if="0 < num && num != page" :to="{ name: router_name, params: Object.assign({ page: num === 1 ? null : num }, router_params) }" v-html="num"></nuxt-link>
-        <span v-if="0 < num && num == page" aria-current="page">{{num}}</span>
+        <nuxt-link v-if="0 < num && num != pageNum" :to="{ name: router_name, params: formatRouterParams({ page: num }) }" v-html="num"></nuxt-link>
+        <span v-if="0 < num && num == pageNum" aria-current="page">{{num}}</span>
       </li>
 
       <li v-if="showPrevNext">
-        <router-link v-if="hasNext" :to="{ name: router_name,  params: Object.assign({ page: pageNum + 1 }, router_params)}">
+        <router-link v-if="hasNext" :to="{ name: router_name,  params: formatRouterParams({ page: pageNum + 1 })}">
           <span uk-pagination-next>Next</span>
         </router-link>
         <a v-else class="disabled"><span uk-pagination-next>Next</span></a>
       </li>
 
-      <li v-if="showFirstLast && page < totalPage">
-        <router-link :to="{ name: router_name, params: Object.assign({ page: totalPage }, router_params)}">
+      <li v-if="showFirstLast && pageNum < totalPage">
+        <router-link :to="{ name: router_name, params: formatRouterParams({ page: totalPage })}">
           <span uk-pagination-last>Last</span>
         </router-link>
       </li>
@@ -87,18 +87,16 @@ export default {
   computed: {
 
     pageNum() {
-      let page = parseInt(this.page);
-      if(this.router_params && typeof this.router_params.slug === 'number') {
-        page = this.router_params.slug;
-      }
-      return page;
+      return parseInt(this.page);
     },
+
     hasNext() {
       return this.pageNum < this.totalPage
     },
+
     pages () {
       let nums = [];
-      let page = parseInt(this.pageNum);
+      let page = this.pageNum;
       let start = page - this.pageRange,
           end = page + this.pageRange
 
@@ -119,6 +117,23 @@ export default {
 
       return nums
     }
+  },
+
+  methods: {
+
+    //pagenationに渡すrouteパラメーター生成
+    formatRouterParams(append) {
+      if(append.hasOwnProperty('page') && append.page === 1) {
+        append.page = null;
+      }
+
+      if(this.router_params.slug === 'all' && append.hasOwnProperty('page')) {
+        append.slug = append.page
+      }
+
+      return Object.assign({}, this.router_params, append)
+    }
+
   }
 }
 </script>

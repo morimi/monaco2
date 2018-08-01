@@ -29,6 +29,8 @@ export const state = () => ({
   article: {},
   news: {},
 
+  validSlugs: [],
+
   /**
    * @type {{message: string, statusCode: number}}
    */
@@ -39,10 +41,22 @@ export const state = () => ({
 })
 
 export const getters = {
+  page(state, getters, rootState) {
+    if(getters.slug === 'all') {
+      return Number(rootState.route.params.slug) || 1;
+    }
+    return Number(rootState.route.params.page) || 1;
+  },
+
+  slug(state, getters, rootState) {
+    let _s = rootState.route.params.slug;
+
+    return state.validSlugs.find( k => k == _s) ? _s : 'all';
+  },
 
   category(state, getters, rootState) {
     let parent = rootState.route.params.parent,
-    slug = rootState.route.params.slug;
+    slug = getters.slug;
 
     return getters.getCategoryByName(parent, slug)
   },
@@ -52,16 +66,14 @@ export const getters = {
    */
   getCategoryByName: (state, getters, rootState) => (parent, slug) => {
     let cat = null;
-
     //ルートストアのカテゴリーリストからparams.slugに該当するカテゴリーを探す
-    if( parent && slug ) {
+    if( parent && slug && slug !== 'all' ) {
       cat = state.categories[parent].child.find(cat => cat.slug === slug);
 
     //params.nameに該当するカテゴリーがあったらワンチャン
-    } else if(/^(game|app)$/.test(parent) && !slug) {
+    } else if(/^(game|app)$/.test(parent)) {
       cat = state.categories[parent];
     }
-
     return cat
   }
 }
@@ -75,14 +87,15 @@ export const actions = {
 
   async fetchCategories({ commit, getters, state, rootState }, { parent, slug, page, prefetch }) {
 
-    console.log('fetchCategories', 'parent:' + parent, 'slug:' + slug, 'page:' + page)
+    slug = (slug && typeof slug === 'number') || !slug ? 'all' : slug;
+
+    console.log('fetchCategories', 'parent:' + parent, 'slug:' + slug, 'page:' + page, ' prefetch:' + prefetch)
 
     commit('setError', null)
 
     const category = getters.getCategoryByName(parent, slug);
     const parentCategory = getters.getCategoryByName(parent);
 
-    slug = slug || 'all';
 
     //カテゴリ情報がなかった or 読み込み中
     if(! category ) return;
@@ -106,7 +119,7 @@ export const actions = {
       '/wp-json/wp/v2/posts/',
       {
         transformRequest: [(data, headers) => {
-          commit('setLoading', true);
+        //  commit('setLoading', true);
           return data;
         }],
         params: {
@@ -118,7 +131,7 @@ export const actions = {
       }
     ).then( res => {
 
-      commit('setLoading', false);
+      //commit('setLoading', false);
       commit('setEntries', { parent, slug, page, data: res});
 
       if( res.length === 0 ) {
@@ -126,7 +139,6 @@ export const actions = {
       }
 
     }).catch((e)=>{
-      console.log(e.config)
       if(!isCancel(e)) {
         commit('setError', { message: 'Entry not found', code: 404 })
       }
@@ -155,6 +167,7 @@ export const mutations = {
       state[key]['all'] = {};
       categories[key].child.forEach(cat => {
         state[key][cat.slug] = {}
+        state.validSlugs.push(cat.slug);
       })
     })
   },

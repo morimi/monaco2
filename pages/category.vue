@@ -19,7 +19,7 @@
         v-if="entries.length"
         :page="this.page"
         :router_name="routerName"
-        :router_params="{ parent: $route.params.parent, slug: $route.params.slug }"
+        :router_params="{ parent: this.parent, slug: this.slug }"
         :totalPage="category.totalPage"></pagenation>
 
     </lazy-wrapper>
@@ -49,27 +49,17 @@ export default {
     Pagenation,
     LazyWrapper
   },
+
   computed: {
     ...mapState('category', [ 'error', 'loading']),
-    ...mapGetters('category', ['category']),
+    ...mapGetters('category', ['category', 'slug', 'page']),
 
     parent() {
       return this.$route.params.parent
     },
 
-    slug() {
-      return typeof this.$route.params.slug === 'string' && this.$route.params.slug || 'all';
-    },
-
-    page() {
-      if( typeof this.$route.params.slug === 'number') {
-        return this.$route.params.slug;
-      }
-      return this.$route.params.page || 1;
-    },
-
     entries() {
-      return (this.parent && this.slug) ? this.$store.state.category[this.parent][this.slug][this.page] : []
+      return this.$store.state.category[this.parent][this.slug][this.page] || []
     },
 
     routerName() {
@@ -79,11 +69,9 @@ export default {
         name += '-parent';
       }
 
-      if( this.slug ) {
         name += '-slug'
-      }
 
-      if( this.page ) {
+      if( this.slug !== 'all' && this.page ) {
         name += '-page'
       }
 
@@ -94,9 +82,13 @@ export default {
   //ロード
   async fetch ({ store, error, params:{ parent, slug, page = 1} }) {
 
-  console.log('fetch', parent, slug, page)
+  console.log('fetch', parent, store.getters['category/slug'], store.getters['category/page'])
 
-   await store.dispatch('category/fetchCategories', { parent, slug, page })
+   await store.dispatch('category/fetchCategories', {
+     parent,
+     slug: store.getters['category/slug'],
+     page: store.getters['category/page']
+   })
 
   },
 
@@ -125,5 +117,33 @@ export default {
       ]
     }
   },
+
+  mounted() {
+    this.pageChanged(this.page)
+  },
+
+  watch: {
+    page: "pageChanged"
+  },
+
+  methods: {
+    pageChanged(to, from = -1) {
+      if (to < 0 || to > this.category.totalPage) {
+        this.$router.replace( location.pathname.replace(/(.+)\/\d+$/, '$1') )
+        return;
+      }
+
+      if((this.page + 1) >= this.category.totalPage) {
+        return;
+      }
+
+      this.$store.dispatch('category/fetchCategories', {
+        parent: this.parent,
+        slug: this.slug,
+        page: this.page + 1,
+        prefetch: true
+      })
+    }
+  }
 }
 </script>
